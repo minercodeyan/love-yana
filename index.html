@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Яна — полгода вместе</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --plum-deep:#2b1830;
+            --plum-mid:#3d2440;
+            --rose:#e8b4bc;
+            --rose-soft:#f3d9dd;
+            --gold:#d9b382;
+            --cream:#f8f0e6;
+            --mauve:#6e4f63;
+        }
+
+        *{box-sizing:border-box; margin:0; padding:0;}
+
+        html{scroll-behavior:smooth;}
+
+        body{
+            background:var(--plum-deep);
+            color:var(--cream);
+            font-family:'Manrope', sans-serif;
+            font-weight:400;
+            overflow-x:hidden;
+            line-height:1.6;
+        }
+
+        h1,h2,h3,.display{
+            font-family:'Cormorant Garamond', serif;
+            font-weight:600;
+            letter-spacing:0.01em;
+        }
+
+        a{color:inherit;}
+
+        /* ---------- floating hearts ---------- */
+        #heart-field{
+            position:fixed;
+            inset:0;
+            pointer-events:none;
+            z-index:1;
+            overflow:hidden;
+        }
+        .heart{
+            position:absolute;
+            bottom:-10%;
+            opacity:0;
+            color:var(--rose);
+            animation:rise linear infinite;
+        }
+        @keyframes rise{
+            0%{ transform:translateY(0) translateX(0) rotate(0deg); opacity:0; }
+            8%{ opacity:0.75; }
+            92%{ opacity:0.5; }
+            100%{ transform:translateY(-115vh) translateX(var(--drift,20px)) rotate(20deg); opacity:0; }
+        }
+
+        section{
+            position:relative;
+            z-index:2;
+            padding:120px 24px;
+            max-width:760px;
+            margin:0 auto;
+        }
+
+        /* ---------- hero ---------- */
+        #hero{
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            text-align:center;
+            padding-top:60px;
+            padding-bottom:60px;
+        }
+
+        .eyebrow-date{
+            font-size:0.95rem;
+            color:var(--rose-soft);
+            opacity:0.75;
+            margin-bottom:18px;
+        }
+
+        #hero h1{
+            font-size:clamp(2.6rem, 8vw, 5.2rem);
+            font-style:italic;
+            line-height:1.05;
+            color:var(--cream);
+        }
+
+        #hero h1 span{
+            display:block;
+            color:var(--rose);
+            font-size:clamp(3.2rem, 11vw, 7rem);
+            font-style:normal;
+        }
+
+        .hero-sub{
+            margin-top:28px;
+            font-size:1.15rem;
+            color:var(--rose-soft);
+            max-width:480px;
+        }
+
+        .counter-wrap{
+            margin-top:56px;
+            display:flex;
+            gap:36px;
+            flex-wrap:wrap;
+            justify-content:center;
+        }
+
+        .counter-block{
+            text-align:center;
+        }
+
+        .counter-num{
+            font-family:'Cormorant Garamond', serif;
+            font-size:2.6rem;
+            font-weight:600;
+            color:var(--gold);
+            display:block;
+        }
+
+        .counter-label{
+            font-size:0.8rem;
+            color:var(--rose-soft);
+            opacity:0.7;
+            margin-top:4px;
+        }
+
+        .scroll-hint{
+            margin-top:70px;
+            font-size:0.85rem;
+            color:var(--rose-soft);
+            opacity:0.6;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:8px;
+        }
+        .scroll-hint svg{ animation:bob 2s ease-in-out infinite; }
+        @keyframes bob{
+            0%,100%{ transform:translateY(0); }
+            50%{ transform:translateY(6px); }
+        }
+
+        /* ---------- letter ---------- */
+        #letter{
+            text-align:left;
+        }
+        #letter h2{
+            font-size:2.1rem;
+            font-style:italic;
+            color:var(--rose);
+            margin-bottom:28px;
+        }
+        #letter p{
+            font-size:1.08rem;
+            color:var(--cream);
+            opacity:0.92;
+            max-width:640px;
+            margin-bottom:20px;
+        }
+        #letter .signature{
+            margin-top:36px;
+            font-family:'Cormorant Garamond', serif;
+            font-style:italic;
+            font-size:1.6rem;
+            color:var(--gold);
+        }
+
+        /* ---------- timeline ---------- */
+        #timeline h2{
+            font-size:2.1rem;
+            font-style:italic;
+            color:var(--rose);
+            margin-bottom:52px;
+            text-align:center;
+        }
+
+        .tl-item{
+            display:grid;
+            grid-template-columns:96px 1fr;
+            gap:24px;
+            padding-bottom:44px;
+            position:relative;
+            opacity:0;
+            transform:translateY(16px);
+            transition:opacity 0.7s ease, transform 0.7s ease;
+        }
+        .tl-item.visible{ opacity:1; transform:translateY(0); }
+
+        .tl-item::before{
+            content:'';
+            position:absolute;
+            left:47px;
+            top:8px;
+            bottom:-44px;
+            width:1px;
+            background:var(--mauve);
+        }
+        .tl-item:last-child::before{ display:none; }
+
+        .tl-date{
+            font-size:0.85rem;
+            color:var(--gold);
+            padding-top:2px;
+            text-align:right;
+        }
+
+        .tl-content h3{
+            font-size:1.3rem;
+            font-style:italic;
+            color:var(--cream);
+            margin-bottom:6px;
+        }
+        .tl-content p{
+            font-size:0.98rem;
+            color:var(--rose-soft);
+            opacity:0.85;
+        }
+
+        /* ---------- gallery ---------- */
+        #gallery h2{
+            font-size:2.1rem;
+            font-style:italic;
+            color:var(--rose);
+            margin-bottom:12px;
+            text-align:center;
+        }
+        #gallery .gallery-note{
+            text-align:center;
+            color:var(--rose-soft);
+            opacity:0.65;
+            font-size:0.92rem;
+            margin-bottom:44px;
+        }
+
+        .gallery-grid{
+            display:grid;
+            grid-template-columns:repeat(3, 1fr);
+            gap:16px;
+        }
+        .gallery-grid .ph:nth-child(1){ grid-column:span 2; grid-row:span 2; }
+        .gallery-grid .ph:nth-child(4){ grid-column:span 2; }
+
+        .ph{
+            aspect-ratio:1/1;
+            border:1px dashed rgba(232,180,188,0.4);
+            border-radius:6px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:rgba(255,255,255,0.02);
+            transition:transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+        }
+        .gallery-grid .ph:nth-child(4){ aspect-ratio:auto; height:100%; min-height:140px; }
+        .ph:hover{
+            transform:translateY(-4px);
+            border-color:var(--rose);
+            background:rgba(232,180,188,0.06);
+        }
+        .ph svg{ opacity:0.4; width:34px; height:34px; }
+
+        /* ---------- closing ---------- */
+        #closing{
+            text-align:center;
+            padding-bottom:160px;
+        }
+        #closing h2{
+            font-size:clamp(2rem, 6vw, 3.2rem);
+            font-style:italic;
+            color:var(--cream);
+            line-height:1.2;
+        }
+        #closing h2 span{ color:var(--rose); }
+
+        .heart-btn{
+            margin-top:44px;
+            display:inline-flex;
+            align-items:center;
+            gap:10px;
+            padding:16px 34px;
+            border:1px solid var(--rose);
+            border-radius:100px;
+            color:var(--rose-soft);
+            background:transparent;
+            font-family:'Manrope', sans-serif;
+            font-size:0.95rem;
+            cursor:pointer;
+            transition:background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+        .heart-btn:hover{
+            background:var(--rose);
+            color:var(--plum-deep);
+            transform:scale(1.03);
+        }
+        .heart-btn svg{ width:16px; height:16px; }
+
+        footer{
+            text-align:center;
+            padding:32px 24px 48px;
+            font-size:0.8rem;
+            color:var(--rose-soft);
+            opacity:0.4;
+            position:relative;
+            z-index:2;
+        }
+
+        @media (max-width:560px){
+            section{ padding:90px 20px; }
+            .tl-item{ grid-template-columns:70px 1fr; gap:16px; }
+            .tl-item::before{ left:34px; }
+            .gallery-grid{ grid-template-columns:repeat(2, 1fr); }
+            .gallery-grid .ph:nth-child(1){ grid-column:span 2; grid-row:span 1; aspect-ratio:16/10; }
+            .gallery-grid .ph:nth-child(4){ grid-column:span 2; height:auto; aspect-ratio:16/10; }
+        }
+
+        @media (prefers-reduced-motion: reduce){
+            .heart{ animation:none; display:none; }
+            .scroll-hint svg{ animation:none; }
+            .tl-item{ transition:none; opacity:1; transform:none; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="heart-field"></div>
+
+<!-- ================= HERO ================= -->
+<section id="hero">
+    <div class="eyebrow-date">11 сентября — полгода вместе</div>
+    <h1>Полгода<br><span>с Яной</span></h1>
+    <p class="hero-sub">Сто восемьдесят дней, а всё ещё как в первый вечер, когда я не мог перестать думать о тебе.</p>
+
+    <div class="counter-wrap">
+        <div class="counter-block">
+            <span class="counter-num" id="days-count">180</span>
+            <span class="counter-label">дней</span>
+        </div>
+        <div class="counter-block">
+            <span class="counter-num">6</span>
+            <span class="counter-label">месяцев</span>
+        </div>
+        <div class="counter-block">
+            <span class="counter-num">∞</span>
+            <span class="counter-label">впереди</span>
+        </div>
+    </div>
+
+    <div class="scroll-hint">
+        <span>пролистай ниже</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
+    </div>
+</section>
+
+<!-- ================= LETTER ================= -->
+<section id="letter">
+    <h2>Немного слов для тебя</h2>
+    <p>Яна, за эти полгода ты стала той частью дня, без которой он кажется незаконченным. Мне нравится, как ты смеёшься над своими же шутками, как злишься на плохую погоду и как умеешь превратить обычный вечер во что-то, что хочется запомнить.</p>
+    <p>Спасибо, что выбираешь меня каждый день — не громкими словами, а маленькими вещами, которые я замечаю. Это только начало, и я рад, что оно у меня есть с тобой.</p>
+    <div class="signature">твой человек</div>
+</section>
+
+<!-- ================= TIMELINE ================= -->
+<section id="timeline">
+    <h2>Наши полгода</h2>
+
+    <div class="tl-item">
+        <div class="tl-date">День 1</div>
+        <div class="tl-content">
+            <h3>Мы встретились</h3>
+            <p>Замени этот текст на историю вашего знакомства.</p>
+        </div>
+    </div>
+
+    <div class="tl-item">
+        <div class="tl-date">День 12</div>
+        <div class="tl-content">
+            <h3>Первое свидание</h3>
+            <p>Опиши, куда вы ходили и что запомнилось больше всего.</p>
+        </div>
+    </div>
+
+    <div class="tl-item">
+        <div class="tl-date">День 45</div>
+        <div class="tl-content">
+            <h3>Особый момент</h3>
+            <p>Место для истории, которая много значит только для вас двоих.</p>
+        </div>
+    </div>
+
+    <div class="tl-item">
+        <div class="tl-date">День 180</div>
+        <div class="tl-content">
+            <h3>Сегодня</h3>
+            <p>Полгода — и это только начало большой истории.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section id="gallery">
+    <h2>Наши моменты</h2>
+    <p class="gallery-note">заглушки — замени на свои фото</p>
+    <div class="gallery-grid">
+        <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5.5-5.5L3 19"/></svg></div>
+        <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5.5-5.5L3 19"/></svg></div>
+        <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5.5-5.5L3 19"/></svg></div>
+        <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5.5-5.5L3 19"/></svg></div>
+        <div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-5.5-5.5L3 19"/></svg></div>
+    </div>
+</section>
+
+<!-- ================= CLOSING ================= -->
+<section id="closing">
+    <h2>С полугодом, <span>Яна</span>.<br>Спасибо, что ты есть.</h2>
+    <button class="heart-btn" onclick="burstHearts()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-10-9.3C.5 8.1 2.3 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.3 0 5.1 3.1 3.6 6.7C19.5 16.4 12 21 12 21z"/></svg>
+        я тебя люблю
+    </button>
+</section>
+
+<footer>сделано с любовью · 11.09.2026</footer>
+
+<script>
+    // ---- floating hearts background ----
+    const field = document.getElementById('heart-field');
+    const heartSVG = '<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 21s-7.5-4.6-10-9.3C.5 8.1 2.3 5 5.6 5c2 0 3.4 1.1 4.4 2.6C11 6.1 12.4 5 14.4 5c3.3 0 5.1 3.1 3.6 6.7C19.5 16.4 12 21 12 21z"/></svg>';
+
+    function spawnHeart(){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.innerHTML = heartSVG;
+        const size = 10 + Math.random()*18;
+        h.style.width = size+'px';
+        h.style.height = size+'px';
+        h.style.left = Math.random()*100+'vw';
+        h.style.setProperty('--drift', (Math.random()*80-40)+'px');
+        h.style.animationDuration = (9 + Math.random()*8)+'s';
+        field.appendChild(h);
+        setTimeout(()=>h.remove(), 18000);
+    }
+
+    for(let i=0;i<10;i++){ setTimeout(spawnHeart, i*700); }
+    setInterval(spawnHeart, 1400);
+
+    function burstHearts(){
+        for(let i=0;i<18;i++){ setTimeout(spawnHeart, i*60); }
+    }
+
+    // ---- timeline reveal on scroll ----
+    const items = document.querySelectorAll('.tl-item');
+    const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+            if(e.isIntersecting){ e.target.classList.add('visible'); }
+        });
+    }, { threshold: 0.25 });
+    items.forEach(item=>io.observe(item));
+
+    // ---- live day counter (auto-updates based on the anniversary date) ----
+    // Замени startDate на дату начала ваших отношений, если хочешь точный счётчик.
+    const startDate = new Date(2026, 2, 11); // 11 марта 2026 -> ровно полгода до 11 сентября 2026
+    function updateDays(){
+        const diff = Math.floor((new Date() - startDate) / 86400000);
+        document.getElementById('days-count').textContent = diff > 0 ? diff : 180;
+    }
+    updateDays();
+</script>
+
+</body>
+</html>
